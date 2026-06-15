@@ -1,6 +1,6 @@
 # STA Task Hub
 
-This is a first internal-task MVP prototype for STA. It runs as a static browser app and stores sample data plus newly created tasks in `localStorage`.
+This is a first internal-task MVP prototype for STA. It runs as a static browser app and stores shared tasks and updates in Supabase, with a local browser fallback if the database is temporarily unreachable.
 
 Open `index.html` in a browser to try it, or run `npm run dev` and visit `http://127.0.0.1:4173`.
 
@@ -20,13 +20,14 @@ This project is ready for Vercel as a static site.
 - Task creation form
 - Task updates feed
 - Search across task name, project, owner, priority, and status
-- Local persistence in the browser
+- Shared Supabase persistence for tasks and updates
+- STA red, black, and white visual palette
 
 ## Good next build steps
 
 - Add real sign-in and team roles
-- Replace local browser storage with a PostgreSQL database
 - Add attachments and activity history
 - Add project templates
 - Add email or WhatsApp notifications
 - Add manager approval flows
+- Tighten Supabase policies after authentication is added

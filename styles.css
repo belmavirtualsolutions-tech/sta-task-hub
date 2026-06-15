@@ -1,17 +1,18 @@
 :root {
-  --bg: #f6f7f9;
+  --bg: #f7f7f8;
   --surface: #ffffff;
-  --surface-2: #eef2f6;
-  --ink: #17202a;
-  --muted: #637083;
-  --line: #dce3ea;
-  --blue: #2563eb;
-  --blue-dark: #1747b9;
+  --surface-2: #f0f1f3;
+  --ink: #111111;
+  --muted: #696d76;
+  --line: #dedfe3;
+  --accent: #d71920;
+  --accent-dark: #a90f15;
+  --accent-soft: #fde8ea;
+  --black: #070707;
   --green: #16805d;
   --amber: #b45309;
-  --red: #bf2b2b;
-  --violet: #7048c2;
-  --shadow: 0 18px 50px rgba(23, 32, 42, 0.08);
+  --red: #d71920;
+  --shadow: 0 18px 50px rgba(17, 17, 17, 0.08);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -43,7 +44,7 @@ button {
 }
 
 .sidebar {
-  background: #141923;
+  background: var(--black);
   color: #fff;
   padding: 24px;
   display: flex;
@@ -63,7 +64,7 @@ button {
   display: grid;
   place-items: center;
   border-radius: 8px;
-  background: linear-gradient(135deg, #2f7cf6, #19a974);
+  background: var(--accent);
   font-weight: 800;
 }
 
@@ -137,9 +138,22 @@ button {
 
 .eyebrow {
   margin: 0 0 4px;
-  color: var(--blue);
+  color: var(--accent);
   text-transform: uppercase;
   font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.data-mode {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-top: 10px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -202,12 +216,12 @@ input {
 }
 
 .primary-button {
-  background: var(--blue);
+  background: var(--accent);
   color: #fff;
 }
 
 .primary-button:hover {
-  background: var(--blue-dark);
+  background: var(--accent-dark);
 }
 
 .secondary-button {
@@ -364,7 +378,7 @@ input {
 .bar-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--blue), var(--green));
+  background: linear-gradient(90deg, var(--accent), var(--black));
 }
 
 .board-toolbar {
@@ -391,8 +405,8 @@ input {
 
 .segment.active {
   background: #fff;
-  color: var(--blue);
-  box-shadow: 0 4px 12px rgba(23, 32, 42, 0.08);
+  color: var(--accent);
+  box-shadow: 0 4px 12px rgba(17, 17, 17, 0.08);
 }
 
 .kanban {
@@ -436,8 +450,8 @@ input {
 }
 
 .small-button:hover {
-  color: var(--blue);
-  border-color: #b7c8fb;
+  color: var(--accent);
+  border-color: #f0a3a7;
 }
 
 .projects-grid {
@@ -470,7 +484,7 @@ input {
 }
 
 .update-item {
-  border-left: 4px solid var(--blue);
+  border-left: 4px solid var(--accent);
   background: #fff;
   border-radius: 8px;
   padding: 12px;
@@ -510,7 +524,7 @@ input {
 }
 
 .task-modal::backdrop {
-  background: rgba(20, 25, 35, 0.58);
+  background: rgba(7, 7, 7, 0.64);
 }
 
 .modal-card {

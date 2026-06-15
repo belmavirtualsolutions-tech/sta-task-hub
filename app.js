@@ -1,9 +1,18 @@
 const STORAGE_KEY = "sta-task-hub-state-v1";
+const SUPABASE_URL = "https://awzskjknfelgdvyvkpui.supabase.co";
+const SUPABASE_KEY = "sb_publishable_0hsnBkyRXUWQSiAyDRKYWA_q-0Y0740";
 
 const statuses = ["To Do", "In Progress", "Review", "Done"];
+const dbHeaders = {
+  apikey: SUPABASE_KEY,
+  Authorization: `Bearer ${SUPABASE_KEY}`,
+  "Content-Type": "application/json",
+  Prefer: "return=representation",
+};
 
 const seedState = {
   projectFilter: "all",
+  dataMode: "Loading shared workspace",
   tasks: [
     {
       id: crypto.randomUUID(),
@@ -72,7 +81,7 @@ const seedState = {
   ],
 };
 
-let state = loadState();
+let state = loadLocalState();
 let currentView = "dashboard";
 
 const views = {
@@ -95,7 +104,7 @@ document.querySelectorAll(".nav-item").forEach((button) => {
 document.querySelectorAll("[data-project-filter]").forEach((button) => {
   button.addEventListener("click", () => {
     state.projectFilter = button.dataset.projectFilter;
-    saveState();
+    saveLocalState();
     render();
   });
 });
@@ -109,14 +118,12 @@ document.querySelector("#closeTaskModal").addEventListener("click", () => taskMo
 document.querySelector("#cancelTask").addEventListener("click", () => taskModal.close());
 searchInput.addEventListener("input", render);
 
-taskForm.addEventListener("submit", (event) => {
+taskForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const title = document.querySelector("#taskTitle").value.trim();
   const firstUpdate = document.querySelector("#taskDescription").value.trim();
-
-  state.tasks.unshift({
-    id: crypto.randomUUID(),
+  const taskDraft = {
     title,
     project: document.querySelector("#taskProject").value,
     owner: document.querySelector("#taskOwner").value,
@@ -126,40 +133,146 @@ taskForm.addEventListener("submit", (event) => {
     updates: firstUpdate
       ? [{ author: "You", text: firstUpdate, createdAt: formatNow() }]
       : [],
-  });
+  };
 
   taskForm.reset();
   taskModal.close();
-  saveState();
-  render();
+
+  try {
+    const createdTask = await createTask(taskDraft);
+    if (firstUpdate) {
+      await createUpdate(createdTask.id, firstUpdate, "You");
+    }
+    await refreshTasks();
+  } catch (error) {
+    state.dataMode = "Local backup mode";
+    state.tasks.unshift({ ...taskDraft, id: crypto.randomUUID() });
+    saveLocalState();
+    render();
+  }
 });
 
-updateForm.addEventListener("submit", (event) => {
+updateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const taskId = document.querySelector("#updateTaskSelect").value;
   const text = document.querySelector("#updateText").value.trim();
   if (!text) return;
 
-  const task = state.tasks.find((item) => item.id === taskId);
-  task.updates.unshift({ author: "You", text, createdAt: formatNow() });
   document.querySelector("#updateText").value = "";
-  saveState();
-  render();
+
+  try {
+    await createUpdate(taskId, text, "You");
+    await refreshTasks();
+  } catch (error) {
+    const task = state.tasks.find((item) => item.id === taskId);
+    if (!task) return;
+    task.updates.unshift({ author: "You", text, createdAt: formatNow() });
+    state.dataMode = "Local backup mode";
+    saveLocalState();
+    render();
+  }
 });
 
-function loadState() {
+function loadLocalState() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) return structuredClone(seedState);
 
   try {
-    return JSON.parse(stored);
+    return { ...structuredClone(seedState), ...JSON.parse(stored) };
   } catch {
     return structuredClone(seedState);
   }
 }
 
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+function saveLocalState() {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      projectFilter: state.projectFilter,
+      dataMode: state.dataMode,
+      tasks: state.tasks,
+    })
+  );
+}
+
+async function refreshTasks() {
+  const [tasks, updates] = await Promise.all([
+    supabaseRequest("/rest/v1/tasks?select=*&order=inserted_at.desc"),
+    supabaseRequest("/rest/v1/task_updates?select=*&order=inserted_at.desc"),
+  ]);
+
+  const updatesByTask = updates.reduce((grouped, update) => {
+    grouped[update.task_id] = grouped[update.task_id] || [];
+    grouped[update.task_id].push({
+      id: update.id,
+      author: update.author,
+      text: update.body,
+      createdAt: formatTimestamp(update.inserted_at),
+    });
+    return grouped;
+  }, {});
+
+  state.tasks = tasks.map((task) => ({
+    id: task.id,
+    title: task.title,
+    project: task.project,
+    owner: task.owner,
+    priority: task.priority,
+    status: task.status,
+    dueDate: task.due_date,
+    updates: updatesByTask[task.id] || [],
+  }));
+  state.dataMode = "Shared Supabase workspace";
+  saveLocalState();
+  render();
+}
+
+async function createTask(task) {
+  const [createdTask] = await supabaseRequest("/rest/v1/tasks", {
+    method: "POST",
+    body: JSON.stringify({
+      title: task.title,
+      project: task.project,
+      owner: task.owner,
+      priority: task.priority,
+      status: task.status,
+      due_date: task.dueDate,
+    }),
+  });
+  return createdTask;
+}
+
+async function updateTaskStatus(taskId, status) {
+  await supabaseRequest(`/rest/v1/tasks?id=eq.${taskId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+}
+
+async function createUpdate(taskId, text, author = "STA Team") {
+  await supabaseRequest("/rest/v1/task_updates", {
+    method: "POST",
+    body: JSON.stringify({
+      task_id: taskId,
+      author,
+      body: text,
+    }),
+  });
+}
+
+async function supabaseRequest(path, options = {}) {
+  const response = await fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers: { ...dbHeaders, ...(options.headers || {}) },
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || `Supabase request failed: ${response.status}`);
+  }
+
+  if (response.status === 204) return [];
+  return response.json();
 }
 
 function setView(viewName) {
@@ -216,6 +329,7 @@ function renderMetrics() {
   document.querySelector("#blockedMetric").textContent = blocked.length;
   document.querySelector("#doneMetric").textContent = done.length;
   document.querySelector("#healthScore").textContent = `${score}%`;
+  document.querySelector("#dataMode").textContent = state.dataMode;
 }
 
 function renderPriorityTasks() {
@@ -274,16 +388,28 @@ function renderBoard() {
     .join("");
 
   document.querySelectorAll("[data-move]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const task = state.tasks.find((item) => item.id === button.dataset.taskId);
-      task.status = button.dataset.move;
+      if (!task) return;
+
+      const nextStatus = button.dataset.move;
+      task.status = nextStatus;
       task.updates.unshift({
         author: "System",
-        text: `Status moved to ${button.dataset.move}.`,
+        text: `Status moved to ${nextStatus}.`,
         createdAt: formatNow(),
       });
-      saveState();
+      saveLocalState();
       render();
+
+      try {
+        await updateTaskStatus(task.id, nextStatus);
+        await createUpdate(task.id, `Status moved to ${nextStatus}.`, "System");
+        await refreshTasks();
+      } catch (error) {
+        state.dataMode = "Local backup mode";
+        render();
+      }
     });
   });
 }
@@ -409,6 +535,15 @@ function formatDate(dateText) {
   );
 }
 
+function formatTimestamp(dateText) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(dateText));
+}
+
 function formatNow() {
   return new Intl.DateTimeFormat("en", {
     weekday: "short",
@@ -418,3 +553,7 @@ function formatNow() {
 }
 
 render();
+refreshTasks().catch(() => {
+  state.dataMode = "Local backup mode";
+  render();
+});
