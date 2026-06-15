@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STA Task Hub</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Workspace navigation">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <div>
+            <strong>STA Task Hub</strong>
+            <span>Internal operations</span>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item active" data-view="dashboard" type="button">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+          </button>
+          <button class="nav-item" data-view="board" type="button">
+            <span class="nav-icon">▦</span>
+            Board
+          </button>
+          <button class="nav-item" data-view="projects" type="button">
+            <span class="nav-icon">◇</span>
+            Projects
+          </button>
+          <button class="nav-item" data-view="updates" type="button">
+            <span class="nav-icon">✎</span>
+            Updates
+          </button>
+        </nav>
+
+        <div class="sidebar-panel">
+          <span class="panel-label">Workspace Health</span>
+          <div class="health-score" id="healthScore">82%</div>
+          <p>Based on overdue work, blocked items, and completion rate.</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">STA operations</p>
+            <h1 id="viewTitle">Dashboard</h1>
+          </div>
+          <div class="topbar-actions">
+            <label class="search-box">
+              <span>Search</span>
+              <input id="searchInput" type="search" placeholder="Find tasks, projects, owners..." />
+            </label>
+            <button class="primary-button" id="openTaskModal" type="button">New Task</button>
+          </div>
+        </header>
+
+        <section class="view active" id="dashboardView" aria-labelledby="viewTitle">
+          <div class="metrics-grid">
+            <article class="metric">
+              <span>Open Tasks</span>
+              <strong id="openTasksMetric">0</strong>
+              <small>Across all active projects</small>
+            </article>
+            <article class="metric">
+              <span>Due This Week</span>
+              <strong id="dueMetric">0</strong>
+              <small>Needs attention before Friday</small>
+            </article>
+            <article class="metric warning">
+              <span>Blocked</span>
+              <strong id="blockedMetric">0</strong>
+              <small>Waiting on a decision or input</small>
+            </article>
+            <article class="metric">
+              <span>Done</span>
+              <strong id="doneMetric">0</strong>
+              <small>Completed in this workspace</small>
+            </article>
+          </div>
+
+          <div class="dashboard-layout">
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Priority Work</h2>
+                <span id="priorityCount">0 tasks</span>
+              </div>
+              <div class="task-list" id="priorityTasks"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Team Load</h2>
+                <span>Active ownership</span>
+              </div>
+              <div class="owner-list" id="ownerLoad"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="boardView" aria-labelledby="viewTitle">
+          <div class="board-toolbar">
+            <div class="segmented-control" role="tablist" aria-label="Project filter">
+              <button class="segment active" data-project-filter="all" type="button">All</button>
+              <button class="segment" data-project-filter="Product Launch" type="button">Product Launch</button>
+              <button class="segment" data-project-filter="Client Delivery" type="button">Client Delivery</button>
+              <button class="segment" data-project-filter="Finance Ops" type="button">Finance Ops</button>
+            </div>
+          </div>
+          <div class="kanban" id="kanbanBoard"></div>
+        </section>
+
+        <section class="view" id="projectsView" aria-labelledby="viewTitle">
+          <div class="projects-grid" id="projectsGrid"></div>
+        </section>
+
+        <section class="view" id="updatesView" aria-labelledby="viewTitle">
+          <div class="updates-layout">
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Latest Updates</h2>
+                <span>Most recent first</span>
+              </div>
+              <div class="updates-list" id="updatesList"></div>
+            </section>
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Post Update</h2>
+                <span>Attach to a task</span>
+              </div>
+              <form class="update-form" id="updateForm">
+                <label>
+                  Task
+                  <select id="updateTaskSelect"></select>
+                </label>
+                <label>
+                  Update
+                  <textarea id="updateText" rows="6" placeholder="What changed? What is blocked? What is next?"></textarea>
+                </label>
+                <button class="primary-button" type="submit">Post Update</button>
+              </form>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="task-modal" id="taskModal">
+      <form method="dialog" class="modal-card" id="taskForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Create work item</p>
+            <h2>New Task</h2>
+          </div>
+          <button class="icon-button" id="closeTaskModal" type="button" aria-label="Close">×</button>
+        </div>
+
+        <div class="form-grid">
+          <label class="full">
+            Task Name
+            <input id="taskTitle" required maxlength="90" placeholder="e.g. Prepare weekly delivery report" />
+          </label>
+          <label>
+            Project
+            <select id="taskProject">
+              <option>Product Launch</option>
+              <option>Client Delivery</option>
+              <option>Finance Ops</option>
+              <option>People & Admin</option>
+            </select>
+          </label>
+          <label>
+            Owner
+            <select id="taskOwner">
+              <option>Amaka</option>
+              <option>Tunde</option>
+              <option>Fatima</option>
+              <option>David</option>
+              <option>Grace</option>
+            </select>
+          </label>
+          <label>
+            Priority
+            <select id="taskPriority">
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </label>
+          <label>
+            Due Date
+            <input id="taskDueDate" type="date" required />
+          </label>
+          <label class="full">
+            First Update
+            <textarea id="taskDescription" rows="4" placeholder="Add context, blockers, or next action."></textarea>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary-button" id="cancelTask" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Create Task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

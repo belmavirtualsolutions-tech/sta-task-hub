@@ -1,0 +1,11 @@
+{
+  "name": "sta-task-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Internal STA task, update, and project management hub prototype.",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "python3 -m http.server 4173",
+    "build": "echo \"Static site ready\""
+  }
+}
