@@ -201,6 +201,19 @@ h3,
   align-items: end;
 }
 
+.session-chip {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
 .search-box {
   display: grid;
   gap: 6px;
@@ -266,7 +279,7 @@ input {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 18px;
 }
@@ -302,7 +315,9 @@ input {
 }
 
 .dashboard-layout,
-.updates-layout {
+.updates-layout,
+.reports-grid,
+.admin-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
   gap: 18px;
@@ -480,6 +495,37 @@ input {
   gap: 16px;
 }
 
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.team-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.team-card h2 {
+  margin: 0;
+}
+
+.team-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.section-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
 .project-card {
   padding: 18px;
   display: grid;
@@ -526,6 +572,27 @@ input {
   gap: 14px;
 }
 
+.admin-list,
+.template-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-list div,
+.template-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.admin-list p,
+.template-card p,
+.form-note {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
 .update-form label,
 .form-grid label {
   display: grid;
@@ -533,6 +600,16 @@ input {
   color: var(--muted);
   font-size: 0.84rem;
   font-weight: 800;
+}
+
+.checkbox-row {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  min-height: 42px;
+}
+
+.checkbox-row input {
+  min-height: auto;
 }
 
 .task-modal {
@@ -617,7 +694,9 @@ input {
 
   .metrics-grid,
   .dashboard-layout,
-  .updates-layout {
+  .updates-layout,
+  .reports-grid,
+  .admin-grid {
     grid-template-columns: 1fr;
   }
 }

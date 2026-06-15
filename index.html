@@ -40,6 +40,18 @@
             <span class="nav-icon">✎</span>
             Updates
           </button>
+          <button class="nav-item" data-view="team" type="button">
+            <span class="nav-icon">◉</span>
+            Team
+          </button>
+          <button class="nav-item" data-view="reports" type="button">
+            <span class="nav-icon">▤</span>
+            Reports
+          </button>
+          <button class="nav-item" data-view="admin" type="button">
+            <span class="nav-icon">⚙</span>
+            Admin
+          </button>
         </nav>
 
         <div class="sidebar-panel">
@@ -57,10 +69,12 @@
             <span class="data-mode" id="dataMode">Loading shared workspace</span>
           </div>
           <div class="topbar-actions">
+            <div class="session-chip" id="sessionChip">Guest workspace</div>
             <label class="search-box">
               <span>Search</span>
               <input id="searchInput" type="search" placeholder="Find tasks, projects, owners..." />
             </label>
+            <button class="secondary-button" id="openAuthModal" type="button">Login</button>
             <button class="primary-button" id="openTaskModal" type="button">New Task</button>
           </div>
         </header>
@@ -87,6 +101,11 @@
               <strong id="doneMetric">0</strong>
               <small>Completed in this workspace</small>
             </article>
+            <article class="metric warning">
+              <span>Approvals</span>
+              <strong id="approvalMetric">0</strong>
+              <small>Pending management review</small>
+            </article>
           </div>
 
           <div class="dashboard-layout">
@@ -112,15 +131,15 @@
           <div class="board-toolbar">
             <div class="segmented-control" role="tablist" aria-label="Project filter">
               <button class="segment active" data-project-filter="all" type="button">All</button>
-              <button class="segment" data-project-filter="Product Launch" type="button">Product Launch</button>
-              <button class="segment" data-project-filter="Client Delivery" type="button">Client Delivery</button>
-              <button class="segment" data-project-filter="Finance Ops" type="button">Finance Ops</button>
             </div>
           </div>
           <div class="kanban" id="kanbanBoard"></div>
         </section>
 
         <section class="view" id="projectsView" aria-labelledby="viewTitle">
+          <div class="section-actions">
+            <button class="primary-button" id="openProjectModal" type="button">New Project</button>
+          </div>
           <div class="projects-grid" id="projectsGrid"></div>
         </section>
 
@@ -152,8 +171,97 @@
             </section>
           </div>
         </section>
+
+        <section class="view" id="teamView" aria-labelledby="viewTitle">
+          <div class="section-actions">
+            <button class="primary-button" id="openInviteModal" type="button">Invite Member</button>
+          </div>
+          <div class="team-grid" id="teamGrid"></div>
+        </section>
+
+        <section class="view" id="reportsView" aria-labelledby="viewTitle">
+          <div class="reports-grid">
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Approvals</h2>
+                <span>Review queue</span>
+              </div>
+              <div class="task-list" id="approvalTasks"></div>
+            </section>
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Blocked Work</h2>
+                <span>Needs intervention</span>
+              </div>
+              <div class="task-list" id="blockedTasks"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="adminView" aria-labelledby="viewTitle">
+          <div class="admin-grid">
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Workspace Controls</h2>
+                <span>Prototype admin tools</span>
+              </div>
+              <div class="admin-list">
+                <div>
+                  <strong>Authentication</strong>
+                  <p>Members can sign up or log in with email and password.</p>
+                </div>
+                <div>
+                  <strong>Invitations</strong>
+                  <p>Invite a teammate, assign a role and department, then send them the live app link.</p>
+                </div>
+                <div>
+                  <strong>Permissions</strong>
+                  <p>Roles are tracked now. The next security pass should restrict actions by role.</p>
+                </div>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Task Templates</h2>
+                <span>Quick starts</span>
+              </div>
+              <div class="template-list" id="templateList"></div>
+            </section>
+          </div>
+        </section>
       </main>
     </div>
+
+    <dialog class="task-modal" id="authModal">
+      <form method="dialog" class="modal-card" id="authForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">STA access</p>
+            <h2>Login or Create Account</h2>
+          </div>
+          <button class="icon-button" id="closeAuthModal" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="form-grid">
+          <label class="full">
+            Full Name
+            <input id="authName" placeholder="Your name" />
+          </label>
+          <label class="full">
+            Email
+            <input id="authEmail" type="email" required placeholder="name@company.com" />
+          </label>
+          <label class="full">
+            Password
+            <input id="authPassword" type="password" required minlength="6" placeholder="Minimum 6 characters" />
+          </label>
+        </div>
+        <p class="form-note" id="authMessage">Use Login if you already have an account, or Create Account for first access.</p>
+        <div class="modal-actions">
+          <button class="secondary-button" id="authSignup" type="button">Create Account</button>
+          <button class="primary-button" type="submit">Login</button>
+        </div>
+      </form>
+    </dialog>
 
     <dialog class="task-modal" id="taskModal">
       <form method="dialog" class="modal-card" id="taskForm">
@@ -201,15 +309,159 @@
             Due Date
             <input id="taskDueDate" type="date" required />
           </label>
+          <label>
+            Department
+            <select id="taskDepartment">
+              <option>Operations</option>
+              <option>Growth</option>
+              <option>Finance</option>
+              <option>Admin</option>
+              <option>Leadership</option>
+            </select>
+          </label>
+          <label>
+            Approval
+            <select id="taskApproval">
+              <option>Not Required</option>
+              <option>Pending Approval</option>
+              <option>Approved</option>
+              <option>Changes Requested</option>
+            </select>
+          </label>
+          <label>
+            Recurrence
+            <select id="taskRecurrence">
+              <option>None</option>
+              <option>Daily</option>
+              <option>Weekly</option>
+              <option>Monthly</option>
+            </select>
+          </label>
+          <label>
+            Estimate
+            <input id="taskEstimate" type="number" min="0" step="0.5" value="0" />
+          </label>
+          <label>
+            Tags
+            <input id="taskTags" placeholder="ops, client, weekly" />
+          </label>
+          <label class="checkbox-row">
+            <input id="taskBlocked" type="checkbox" />
+            Mark as blocked
+          </label>
           <label class="full">
             First Update
             <textarea id="taskDescription" rows="4" placeholder="Add context, blockers, or next action."></textarea>
+          </label>
+          <label class="full">
+            Dependency / Blocker Note
+            <textarea id="taskDependency" rows="3" placeholder="What is this waiting on?"></textarea>
           </label>
         </div>
 
         <div class="modal-actions">
           <button class="secondary-button" id="cancelTask" type="button">Cancel</button>
           <button class="primary-button" type="submit">Create Task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="task-modal" id="projectModal">
+      <form method="dialog" class="modal-card" id="projectForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Create project</p>
+            <h2>New Project</h2>
+          </div>
+          <button class="icon-button" id="closeProjectModal" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="form-grid">
+          <label class="full">
+            Project Name
+            <input id="projectName" required maxlength="80" placeholder="e.g. Q3 Client Delivery Sprint" />
+          </label>
+          <label>
+            Owner
+            <input id="projectOwner" required placeholder="Project owner" />
+          </label>
+          <label>
+            Department
+            <select id="projectDepartment">
+              <option>Operations</option>
+              <option>Growth</option>
+              <option>Finance</option>
+              <option>Admin</option>
+              <option>Leadership</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select id="projectStatus">
+              <option>Planning</option>
+              <option>Active</option>
+              <option>At Risk</option>
+              <option>Completed</option>
+              <option>Paused</option>
+            </select>
+          </label>
+          <label>
+            Due Date
+            <input id="projectDueDate" type="date" />
+          </label>
+          <label class="full">
+            Description
+            <textarea id="projectDescription" rows="4" placeholder="What does this project cover?"></textarea>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" id="cancelProject" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Create Project</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="task-modal" id="inviteModal">
+      <form method="dialog" class="modal-card" id="inviteForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Invite teammate</p>
+            <h2>Add STA Member</h2>
+          </div>
+          <button class="icon-button" id="closeInviteModal" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="form-grid">
+          <label>
+            Full Name
+            <input id="inviteName" required placeholder="Member name" />
+          </label>
+          <label>
+            Email
+            <input id="inviteEmail" type="email" required placeholder="name@company.com" />
+          </label>
+          <label>
+            Role
+            <select id="inviteRole">
+              <option>Member</option>
+              <option>Manager</option>
+              <option>Admin</option>
+              <option>Viewer</option>
+            </select>
+          </label>
+          <label>
+            Department
+            <select id="inviteDepartment">
+              <option>Operations</option>
+              <option>Growth</option>
+              <option>Finance</option>
+              <option>Admin</option>
+              <option>Leadership</option>
+            </select>
+          </label>
+        </div>
+        <p class="form-note">After adding them, send the teammate this live app link. They can create an account with the same email.</p>
+        <div class="modal-actions">
+          <button class="secondary-button" id="cancelInvite" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Add Member</button>
         </div>
       </form>
     </dialog>

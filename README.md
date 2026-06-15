@@ -14,20 +14,25 @@ This project is ready for Vercel as a static site.
 
 ## Included in this version
 
+- Email/password login and account creation through Supabase Auth
+- Team member profiles with roles, departments, and invited/active status
+- Admin invite form for adding STA teammates
+- Project records with owners, departments, due dates, and health status
 - Dashboard with open, due, blocked, and completed task counts
 - Kanban board with status movement
 - Project progress cards
-- Task creation form
+- Rich task creation with blocker, approval, recurrence, estimate, tags, and dependency notes
 - Task updates feed
 - Search across task name, project, owner, priority, and status
 - Shared Supabase persistence for tasks and updates
+- Reports for approvals and blocked work
+- Task template guidance
 - STA red, black, and white visual palette
 
 ## Good next build steps
 
-- Add real sign-in and team roles
 - Add attachments and activity history
-- Add project templates
+- Convert template guidance into one-click generated tasks
 - Add email or WhatsApp notifications
-- Add manager approval flows
-- Tighten Supabase policies after authentication is added
+- Add manager approval actions
+- Tighten Supabase policies so actions are restricted by role
