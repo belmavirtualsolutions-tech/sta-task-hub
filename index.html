@@ -13,7 +13,81 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <section class="auth-page active" id="authPage" aria-labelledby="authTitle">
+      <div class="auth-hero">
+        <div class="brand auth-brand">
+          <div class="brand-mark">S</div>
+          <div>
+            <strong>STA Task Hub</strong>
+            <span>Internal operations</span>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">STA workspace access</p>
+          <h1 id="authTitle">Sign in to manage tasks, projects, and team updates.</h1>
+          <p class="auth-copy">
+            A private operations hub for tracking work, moving tasks across statuses, posting updates, and keeping every STA project visible.
+          </p>
+        </div>
+        <div class="auth-highlights" aria-label="Workspace features">
+          <span>Live project board</span>
+          <span>Team updates</span>
+          <span>Task approvals</span>
+        </div>
+      </div>
+
+      <div class="auth-panel">
+        <form class="auth-card" id="authForm">
+          <div class="auth-card-header">
+            <p class="eyebrow">Member login</p>
+            <h2>Welcome Back</h2>
+            <p>Use the email attached to your STA invitation or create your first account.</p>
+          </div>
+          <div class="form-grid auth-form-grid">
+            <label class="full">
+              Full Name
+              <input id="authName" autocomplete="name" placeholder="Your name" />
+            </label>
+            <label class="full">
+              Email
+              <input id="authEmail" type="email" autocomplete="email" required placeholder="name@company.com" />
+            </label>
+            <label class="full">
+              Password
+              <input id="authPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="Minimum 6 characters" />
+            </label>
+          </div>
+          <p class="form-note" id="authMessage">Already invited? Log in or create an account using the same email address.</p>
+          <div class="auth-actions">
+            <button class="primary-button" type="submit">Login</button>
+            <button class="secondary-button" id="authSignup" type="button">Create Account</button>
+          </div>
+        </form>
+
+        <aside class="invite-guide" aria-labelledby="inviteGuideTitle">
+          <div class="section-heading">
+            <h2 id="inviteGuideTitle">Guide for Invited Members</h2>
+            <span>First access</span>
+          </div>
+          <ol class="guide-list">
+            <li>
+              <strong>Use your invited email</strong>
+              <span>Enter the same email your manager added to the Team page.</span>
+            </li>
+            <li>
+              <strong>Create your password</strong>
+              <span>Click Create Account if this is your first visit, then confirm by email if prompted.</span>
+            </li>
+            <li>
+              <strong>Open your workspace</strong>
+              <span>After login, check Dashboard, Board, Projects, Updates, and Team for your assigned work.</span>
+            </li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <div class="app-shell is-hidden" id="appShell">
       <aside class="sidebar" aria-label="Workspace navigation">
         <div class="brand">
           <div class="brand-mark">S</div>
@@ -107,6 +181,19 @@
               <small>Pending management review</small>
             </article>
           </div>
+
+          <section class="guide-strip" aria-labelledby="memberGuideTitle">
+            <div>
+              <p class="eyebrow">Getting started</p>
+              <h2 id="memberGuideTitle">What to do after you log in</h2>
+            </div>
+            <div class="guide-steps">
+              <span>Review priority tasks</span>
+              <span>Move work on the board</span>
+              <span>Post updates before handoff</span>
+              <span>Check approvals and blockers</span>
+            </div>
+          </section>
 
           <div class="dashboard-layout">
             <section class="panel">
@@ -238,37 +325,6 @@
         </section>
       </main>
     </div>
-
-    <dialog class="task-modal" id="authModal">
-      <form method="dialog" class="modal-card" id="authForm">
-        <div class="modal-header">
-          <div>
-            <p class="eyebrow">STA access</p>
-            <h2>Login or Create Account</h2>
-          </div>
-          <button class="icon-button" id="closeAuthModal" type="button" aria-label="Close">×</button>
-        </div>
-        <div class="form-grid">
-          <label class="full">
-            Full Name
-            <input id="authName" placeholder="Your name" />
-          </label>
-          <label class="full">
-            Email
-            <input id="authEmail" type="email" required placeholder="name@company.com" />
-          </label>
-          <label class="full">
-            Password
-            <input id="authPassword" type="password" required minlength="6" placeholder="Minimum 6 characters" />
-          </label>
-        </div>
-        <p class="form-note" id="authMessage">Use Login if you already have an account, or Create Account for first access.</p>
-        <div class="modal-actions">
-          <button class="secondary-button" id="authSignup" type="button">Create Account</button>
-          <button class="primary-button" type="submit">Login</button>
-        </div>
-      </form>
-    </dialog>
 
     <dialog class="task-modal" id="taskModal">
       <form method="dialog" class="modal-card" id="taskForm">

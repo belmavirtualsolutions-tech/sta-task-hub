@@ -40,10 +40,167 @@ button {
   cursor: pointer;
 }
 
+.auth-page {
+  min-height: 100vh;
+  display: none;
+  grid-template-columns: minmax(320px, 0.92fr) minmax(360px, 1.08fr);
+  background:
+    linear-gradient(135deg, rgba(7, 7, 7, 0.92), rgba(17, 17, 17, 0.8)),
+    url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=80") center / cover;
+}
+
+.auth-page.active {
+  display: grid;
+}
+
+.auth-hero {
+  min-height: 100vh;
+  padding: clamp(28px, 5vw, 64px);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+}
+
+.auth-brand span {
+  color: #cbd2de;
+}
+
+.auth-hero h1 {
+  max-width: 650px;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  line-height: 1.04;
+}
+
+.auth-copy {
+  max-width: 560px;
+  margin: 16px 0 0;
+  color: #d8dee8;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.auth-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.auth-highlights span {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.auth-panel {
+  min-height: 100vh;
+  padding: clamp(22px, 4vw, 54px);
+  background: rgba(247, 247, 248, 0.96);
+  display: grid;
+  align-content: center;
+  gap: 16px;
+}
+
+.auth-card,
+.invite-guide,
+.guide-strip {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.auth-card {
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.auth-card-header {
+  margin-bottom: 18px;
+}
+
+.auth-card h2 {
+  font-size: 1.42rem;
+}
+
+.invite-guide h2 {
+  font-size: 1.05rem;
+}
+
+.auth-card-header p:not(.eyebrow) {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.auth-form-grid {
+  grid-template-columns: 1fr;
+}
+
+.auth-actions {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.invite-guide {
+  padding: 20px;
+}
+
+.guide-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: guide;
+}
+
+.guide-list li {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding-left: 42px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.guide-list li::before {
+  counter-increment: guide;
+  content: counter(guide);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.guide-list strong {
+  color: var(--ink);
+}
+
 .app-shell {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
+}
+
+.app-shell.is-hidden {
+  display: none;
 }
 
 .sidebar {
@@ -323,6 +480,38 @@ input {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
   gap: 18px;
+}
+
+.guide-strip {
+  margin-bottom: 18px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.34fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.guide-strip h2 {
+  margin: 0;
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.guide-steps span {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff7f7;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 600;
 }
 
 .panel {
@@ -720,6 +909,18 @@ input {
 }
 
 @media (max-width: 980px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-hero {
+    min-height: auto;
+  }
+
+  .auth-panel {
+    min-height: auto;
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
   }
@@ -751,15 +952,30 @@ input {
   }
 
   .metrics-grid,
+  .guide-strip,
   .dashboard-layout,
   .updates-layout,
   .reports-grid,
   .admin-grid {
     grid-template-columns: 1fr;
   }
+
+  .guide-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
+  .auth-hero,
+  .auth-panel {
+    padding: 22px 14px;
+  }
+
+  .auth-actions,
+  .guide-steps {
+    grid-template-columns: 1fr;
+  }
+
   .main {
     padding: 18px 12px;
   }

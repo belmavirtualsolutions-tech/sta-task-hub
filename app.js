@@ -35,9 +35,10 @@ const views = {
 const viewTitle = document.querySelector("#viewTitle");
 const searchInput = document.querySelector("#searchInput");
 const taskModal = document.querySelector("#taskModal");
-const authModal = document.querySelector("#authModal");
 const projectModal = document.querySelector("#projectModal");
 const inviteModal = document.querySelector("#inviteModal");
+const authPage = document.querySelector("#authPage");
+const appShell = document.querySelector("#appShell");
 
 wireEvents();
 render();
@@ -101,13 +102,11 @@ function wireEvents() {
 
   searchInput.addEventListener("input", render);
   document.querySelector("#openTaskModal").addEventListener("click", openTaskModal);
-  document.querySelector("#openAuthModal").addEventListener("click", () => authModal.showModal());
   document.querySelector("#openProjectModal").addEventListener("click", () => projectModal.showModal());
   document.querySelector("#openInviteModal").addEventListener("click", () => inviteModal.showModal());
 
   document.querySelector("#closeTaskModal").addEventListener("click", () => taskModal.close());
   document.querySelector("#cancelTask").addEventListener("click", () => taskModal.close());
-  document.querySelector("#closeAuthModal").addEventListener("click", () => authModal.close());
   document.querySelector("#closeProjectModal").addEventListener("click", () => projectModal.close());
   document.querySelector("#cancelProject").addEventListener("click", () => projectModal.close());
   document.querySelector("#closeInviteModal").addEventListener("click", () => inviteModal.close());
@@ -222,7 +221,6 @@ async function submitLogin(event) {
     });
     saveSession({ accessToken: auth.access_token, refreshToken: auth.refresh_token, user: auth.user });
     setAuthMessage("Logged in.");
-    authModal.close();
     await refreshWorkspace();
   } catch (error) {
     setAuthMessage("Login failed. Check the email and password.");
@@ -601,8 +599,17 @@ function renderSession() {
   } else {
     chip.textContent = "Guest workspace";
     authButton.textContent = "Login";
-    authButton.onclick = () => authModal.showModal();
+    authButton.onclick = () => {
+      document.querySelector("#authEmail").focus();
+    };
   }
+  renderAuthGate();
+}
+
+function renderAuthGate() {
+  const isSignedIn = Boolean(session?.user?.email);
+  authPage.classList.toggle("active", !isSignedIn);
+  appShell.classList.toggle("is-hidden", !isSignedIn);
 }
 
 function renderMetrics() {
