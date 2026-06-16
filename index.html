@@ -62,6 +62,7 @@
             <button class="primary-button" type="submit">Login</button>
             <button class="secondary-button" id="authSignup" type="button">Create Account</button>
           </div>
+          <button class="forgot-link" id="forgotPassword" type="button">Forgot password?</button>
         </form>
 
         <aside class="invite-guide" aria-labelledby="inviteGuideTitle">
@@ -224,6 +225,10 @@
                 New Status
                 <input id="statusName" required maxlength="32" placeholder="e.g. Waiting, Approved" />
               </label>
+              <label>
+                Color
+                <input id="statusColor" type="color" value="#696d76" />
+              </label>
               <button class="secondary-button" type="submit">Add Status</button>
             </form>
           </div>
@@ -274,6 +279,9 @@
         </section>
 
         <section class="view" id="reportsView" aria-labelledby="viewTitle">
+          <div class="section-actions" style="margin-bottom:16px">
+            <button class="secondary-button" id="exportReportsCSV" type="button">Export CSV</button>
+          </div>
           <div class="reports-grid">
             <section class="panel">
               <div class="section-heading">
@@ -525,6 +533,89 @@
         <div class="modal-actions">
           <button class="secondary-button" id="cancelInvite" type="button">Cancel</button>
           <button class="primary-button" type="submit">Add Member</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Task detail / inline-edit modal -->
+    <dialog class="task-modal" id="taskDetailModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div style="min-width:0">
+            <p class="eyebrow" id="detailProject"></p>
+            <h2 id="detailTitle" style="font-size:1.18rem;line-height:1.3"></h2>
+          </div>
+          <div style="display:flex;gap:8px;align-items:start;flex-shrink:0">
+            <button class="secondary-button" id="editTaskFromDetail" type="button">Edit Task</button>
+            <button class="icon-button" id="closeTaskDetail" type="button" aria-label="Close">×</button>
+          </div>
+        </div>
+        <div class="detail-fields" id="detailFields"></div>
+        <div id="detailNote" style="display:none" class="detail-note">
+          <strong>Dependency / Blocker Note</strong>
+          <span id="detailNoteText"></span>
+        </div>
+        <div class="detail-actions" id="detailActions"></div>
+        <div class="section-heading">
+          <h2>Update History</h2>
+          <span id="detailUpdateCount"></span>
+        </div>
+        <div id="detailUpdatesList"></div>
+        <form id="detailUpdateForm" class="detail-update-post">
+          <label style="display:grid;gap:6px;color:var(--muted);font-size:0.84rem;font-weight:600">
+            Post Update
+            <textarea id="detailUpdateText" rows="3" placeholder="What changed? What is blocked? What is next?"></textarea>
+          </label>
+          <div style="margin-top:8px;display:flex;justify-content:flex-end">
+            <button class="primary-button" type="submit">Post Update</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Edit team member modal -->
+    <dialog class="task-modal" id="editMemberModal">
+      <form method="dialog" class="modal-card" id="editMemberForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Edit member</p>
+            <h2 id="editMemberName"></h2>
+          </div>
+          <button class="icon-button" id="closeEditMemberModal" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="form-grid">
+          <label>
+            Role
+            <select id="editMemberRole">
+              <option>Member</option>
+              <option>Manager</option>
+              <option>Admin</option>
+              <option>Viewer</option>
+            </select>
+          </label>
+          <label>
+            Department
+            <select id="editMemberDepartment">
+              <option>Operations</option>
+              <option>Growth</option>
+              <option>Finance</option>
+              <option>Admin</option>
+              <option>Leadership</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select id="editMemberStatus">
+              <option>Active</option>
+              <option>Invited</option>
+              <option>Paused</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button class="small-button danger" id="removeMemberBtn" type="button">Remove Member</button>
+          <button class="secondary-button" id="cancelEditMember" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Save Changes</button>
         </div>
       </form>
     </dialog>

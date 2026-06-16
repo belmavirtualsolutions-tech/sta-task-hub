@@ -965,6 +965,229 @@ input {
   }
 }
 
+/* ── Task title link ───────────────────────────────────── */
+.task-title-link {
+  cursor: pointer;
+  transition: color 0.12s ease;
+}
+.task-title-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+/* ── Overdue task card ──────────────────────────────────── */
+.task-card.overdue {
+  border-color: #f3b6ba;
+  background: #fff7f7;
+}
+.pill.overdue {
+  color: var(--red);
+  background: #fdecec;
+}
+
+/* ── Drag placeholder ───────────────────────────────────── */
+.drag-placeholder {
+  border: 2px dashed var(--accent);
+  border-radius: 8px;
+  background: #fff7f7;
+  min-height: 72px;
+  opacity: 0.7;
+}
+
+/* ── Task detail modal ──────────────────────────────────── */
+#taskDetailModal {
+  width: min(800px, calc(100vw - 28px));
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.detail-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 18px;
+  padding: 14px;
+  background: var(--surface-2);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.detail-field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 2px;
+}
+.detail-field-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.detail-note {
+  padding: 10px 14px;
+  background: #fff3dc;
+  border-left: 4px solid var(--amber);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  color: var(--amber);
+  font-size: 0.9rem;
+}
+.detail-note strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-update-item {
+  padding: 10px 14px;
+  border-left: 3px solid var(--line);
+  margin-bottom: 8px;
+  background: #fff;
+  border-radius: 0 6px 6px 0;
+}
+.detail-update-item.system-update {
+  border-color: var(--muted);
+  opacity: 0.7;
+}
+.detail-update-meta {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.detail-update-post {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ── Status color dot ───────────────────────────────────── */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Avatar circle ──────────────────────────────────────── */
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.team-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.team-card-header > div {
+  min-width: 0;
+}
+.team-card-header h2 {
+  font-size: 0.98rem;
+}
+.team-card-header p {
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.team-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* ── Template card clickable ────────────────────────────── */
+.template-card {
+  cursor: pointer;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+.template-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.template-card strong::before {
+  content: "＋ ";
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+/* ── Forgot password link ───────────────────────────────── */
+.forgot-link {
+  background: none;
+  border: none;
+  padding: 6px 0 0;
+  color: var(--accent);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+/* ── Approve / success small button ────────────────────── */
+.small-button.success {
+  color: var(--green);
+  border-color: #b7e4d1;
+  background: #e8f7f1;
+}
+.small-button.success:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+/* ── Reports section heading with actions ───────────────── */
+.section-heading-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.section-heading-row h2 {
+  margin: 0;
+}
+.section-heading-row span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* ── Kanban auto-fill for variable column count ─────────── */
+.kanban {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* ── Status color form ──────────────────────────────────── */
+.status-form input[type="color"] {
+  min-width: 44px;
+  width: 44px;
+  min-height: 42px;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
 @media (max-width: 640px) {
   .auth-hero,
   .auth-panel {
