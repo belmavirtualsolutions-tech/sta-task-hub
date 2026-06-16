@@ -19,7 +19,9 @@ This project is ready for Vercel as a static site.
 - Admin invite form for adding STA teammates
 - Project records with owners, departments, due dates, and health status
 - Dashboard with open, due, blocked, and completed task counts
-- Kanban board with status movement
+- Kanban board with drag-and-drop status movement
+- Custom task statuses from the board
+- Delete controls for tasks and projects
 - Project progress cards
 - Rich task creation with blocker, approval, recurrence, estimate, tags, and dependency notes
 - Task updates feed

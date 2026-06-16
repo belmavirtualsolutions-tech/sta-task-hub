@@ -132,6 +132,13 @@
             <div class="segmented-control" role="tablist" aria-label="Project filter">
               <button class="segment active" data-project-filter="all" type="button">All</button>
             </div>
+            <form class="status-form" id="statusForm">
+              <label>
+                New Status
+                <input id="statusName" required maxlength="32" placeholder="e.g. Waiting, Approved" />
+              </label>
+              <button class="secondary-button" type="submit">Add Status</button>
+            </form>
           </div>
           <div class="kanban" id="kanbanBoard"></div>
         </section>

@@ -3,7 +3,7 @@ const SESSION_KEY = "sta-task-hub-session";
 const SUPABASE_URL = "https://awzskjknfelgdvyvkpui.supabase.co";
 const SUPABASE_KEY = "sb_publishable_0hsnBkyRXUWQSiAyDRKYWA_q-0Y0740";
 
-const statuses = ["To Do", "In Progress", "Review", "Done"];
+const defaultStatuses = ["To Do", "In Progress", "Review", "Done"];
 const templates = [
   {
     name: "Weekly Department Update",
@@ -50,6 +50,7 @@ function defaultState() {
     tasks: [],
     projects: [],
     profiles: [],
+    statuses: defaultStatuses,
   };
 }
 
@@ -70,6 +71,7 @@ function saveLocalState() {
       tasks: state.tasks,
       projects: state.projects,
       profiles: state.profiles,
+      statuses: state.statuses,
     })
   );
 }
@@ -117,15 +119,17 @@ function wireEvents() {
   document.querySelector("#inviteForm").addEventListener("submit", submitInvite);
   document.querySelector("#authForm").addEventListener("submit", submitLogin);
   document.querySelector("#authSignup").addEventListener("click", submitSignup);
+  document.querySelector("#statusForm").addEventListener("submit", submitStatus);
 }
 
 async function refreshWorkspace() {
   try {
-    const [tasks, updates, projects, profiles] = await Promise.all([
+    const [tasks, updates, projects, profiles, taskStatuses] = await Promise.all([
       dbRequest("/rest/v1/tasks?select=*&order=inserted_at.desc"),
       dbRequest("/rest/v1/task_updates?select=*&order=inserted_at.desc"),
       dbRequest("/rest/v1/projects?select=*&order=inserted_at.asc"),
       dbRequest("/rest/v1/profiles?select=*&order=inserted_at.asc"),
+      dbRequest("/rest/v1/task_statuses?select=*&order=position.asc"),
     ]);
 
     const updatesByTask = updates.reduce((grouped, update) => {
@@ -141,6 +145,7 @@ async function refreshWorkspace() {
 
     state.projects = projects.map(mapProject);
     state.profiles = profiles.map(mapProfile);
+    state.statuses = taskStatuses.map((status) => status.name);
     state.tasks = tasks.map((task) => mapTask(task, updatesByTask[task.id] || []));
     state.dataMode = "Shared Supabase workspace";
     saveLocalState();
@@ -369,6 +374,34 @@ async function submitProject(event) {
   }
 }
 
+async function submitStatus(event) {
+  event.preventDefault();
+  const input = document.querySelector("#statusName");
+  const name = input.value.trim();
+  if (!name || state.statuses.includes(name)) {
+    input.value = "";
+    return;
+  }
+  input.value = "";
+
+  try {
+    await dbRequest("/rest/v1/task_statuses", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        position: (state.statuses.length + 1) * 10,
+        color: "#111111",
+      }),
+    });
+    await refreshWorkspace();
+  } catch {
+    state.statuses.push(name);
+    state.dataMode = "Local backup mode";
+    saveLocalState();
+    render();
+  }
+}
+
 async function submitInvite(event) {
   event.preventDefault();
   const profile = {
@@ -419,6 +452,44 @@ async function updateTaskStatus(taskId, status) {
       approval_status: status === "Review" ? "Pending Approval" : undefined,
     }),
   });
+}
+
+async function deleteTask(taskId) {
+  const task = state.tasks.find((item) => item.id === taskId);
+  if (!task) return;
+  const confirmed = window.confirm(`Delete task "${task.title}"?`);
+  if (!confirmed) return;
+
+  state.tasks = state.tasks.filter((item) => item.id !== taskId);
+  saveLocalState();
+  render();
+
+  try {
+    await dbRequest(`/rest/v1/tasks?id=eq.${taskId}`, { method: "DELETE" });
+    await refreshWorkspace();
+  } catch {
+    state.dataMode = "Local backup mode";
+    render();
+  }
+}
+
+async function deleteProject(projectId) {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return;
+  const confirmed = window.confirm(`Delete project "${project.name}"? Tasks will remain but lose the project link.`);
+  if (!confirmed) return;
+
+  state.projects = state.projects.filter((item) => item.id !== projectId);
+  saveLocalState();
+  render();
+
+  try {
+    await dbRequest(`/rest/v1/projects?id=eq.${projectId}`, { method: "DELETE" });
+    await refreshWorkspace();
+  } catch {
+    state.dataMode = "Local backup mode";
+    render();
+  }
 }
 
 async function createUpdate(taskId, text, author = "STA Team") {
@@ -517,6 +588,7 @@ function render() {
   renderTeam();
   renderReports();
   renderTemplates();
+  bindTaskCardControls();
 }
 
 function renderSession() {
@@ -603,12 +675,12 @@ function renderOwnerLoad() {
 
 function renderBoard() {
   const tasks = getFilteredTasks();
-  document.querySelector("#kanbanBoard").innerHTML = statuses
+  document.querySelector("#kanbanBoard").innerHTML = state.statuses
     .map((status) => {
       const columnTasks = tasks.filter((task) => task.status === status);
       return `
-        <section class="kanban-column">
-          <div class="column-title">${status}<span>${columnTasks.length}</span></div>
+        <section class="kanban-column" data-status="${escapeHtml(status)}">
+          <div class="column-title">${escapeHtml(status)}<span>${columnTasks.length}</span></div>
           <div class="task-list">${columnTasks.length ? columnTasks.map((task) => taskCard(task, true)).join("") : emptyState("Nothing here yet.")}</div>
         </section>
       `;
@@ -634,6 +706,38 @@ function renderBoard() {
       }
     });
   });
+
+  document.querySelectorAll(".kanban-column").forEach((column) => {
+    column.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      column.classList.add("drag-over");
+    });
+    column.addEventListener("dragleave", () => column.classList.remove("drag-over"));
+    column.addEventListener("drop", async (event) => {
+      event.preventDefault();
+      column.classList.remove("drag-over");
+      await moveTaskToStatus(event.dataTransfer.getData("text/plain"), column.dataset.status);
+    });
+  });
+
+}
+
+async function moveTaskToStatus(taskId, nextStatus) {
+  const task = state.tasks.find((item) => item.id === taskId);
+  if (!task || task.status === nextStatus) return;
+  task.status = nextStatus;
+  task.updates.unshift({ author: "System", text: `Status moved to ${nextStatus}.`, createdAt: formatNow() });
+  saveLocalState();
+  render();
+
+  try {
+    await updateTaskStatus(task.id, nextStatus);
+    await createUpdate(task.id, `Status moved to ${nextStatus}.`, "System");
+    await refreshWorkspace();
+  } catch {
+    state.dataMode = "Local backup mode";
+    render();
+  }
 }
 
 function renderProjects() {
@@ -657,10 +761,17 @@ function renderProjects() {
             <span class="pill">${tasks.length} tasks</span>
             <span class="pill">Due ${project.dueDate ? formatDate(project.dueDate) : "TBD"}</span>
           </div>
+          <div class="card-actions">
+            <button class="small-button danger" data-delete-project="${project.id}" type="button">Delete Project</button>
+          </div>
         </article>
       `;
     })
     .join("");
+
+  document.querySelectorAll("[data-delete-project]").forEach((button) => {
+    button.addEventListener("click", () => deleteProject(button.dataset.deleteProject));
+  });
 }
 
 function renderUpdates() {
@@ -730,14 +841,14 @@ function renderTemplates() {
 }
 
 function taskCard(task, showActions = false) {
-  const actions = statuses
+  const actions = state.statuses
     .filter((status) => status !== task.status)
     .map((status) => `<button class="small-button" data-task-id="${task.id}" data-move="${status}" type="button">${status}</button>`)
     .join("");
   const tags = task.tags?.length ? task.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("") : "";
 
   return `
-    <article class="task-card">
+    <article class="task-card" data-task-card="${task.id}" ${showActions ? 'draggable="true"' : ""}>
       <div>
         <h3>${escapeHtml(task.title)}</h3>
         <div class="task-meta">
@@ -757,9 +868,27 @@ function taskCard(task, showActions = false) {
         ${tags}
       </div>
       ${task.dependencyNote ? `<p class="task-note">${escapeHtml(task.dependencyNote)}</p>` : ""}
-      ${showActions ? `<div class="card-actions">${actions}</div>` : ""}
+      <div class="card-actions">
+        ${showActions ? actions : ""}
+        <button class="small-button danger" data-delete-task="${task.id}" type="button">Delete Task</button>
+      </div>
     </article>
   `;
+}
+
+function bindTaskCardControls() {
+  document.querySelectorAll("[data-delete-task]").forEach((button) => {
+    button.addEventListener("click", () => deleteTask(button.dataset.deleteTask));
+  });
+
+  document.querySelectorAll("[data-task-card][draggable='true']").forEach((card) => {
+    card.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", card.dataset.taskCard);
+      event.dataTransfer.effectAllowed = "move";
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend", () => card.classList.remove("dragging"));
+  });
 }
 
 function emptyState(message) {

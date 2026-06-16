@@ -356,6 +356,15 @@ input {
   gap: 10px;
 }
 
+.task-card[draggable="true"] {
+  cursor: grab;
+}
+
+.task-card.dragging {
+  opacity: 0.55;
+  border-color: var(--accent);
+}
+
 .task-card h3 {
   margin-bottom: 0;
   font-size: 0.98rem;
@@ -418,6 +427,11 @@ input {
 
 .board-toolbar {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .segmented-control {
@@ -427,6 +441,29 @@ input {
   padding: 6px;
   background: var(--surface-2);
   border-radius: 8px;
+}
+
+.status-form {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.status-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.status-form input {
+  min-width: 220px;
 }
 
 .segment {
@@ -455,6 +492,13 @@ input {
 .kanban-column {
   min-height: 520px;
   padding: 14px;
+  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+}
+
+.kanban-column.drag-over {
+  border-color: var(--accent);
+  background: #fff7f7;
+  transform: translateY(-2px);
 }
 
 .column-title {
@@ -487,6 +531,18 @@ input {
 .small-button:hover {
   color: var(--accent);
   border-color: #f0a3a7;
+}
+
+.small-button.danger {
+  color: var(--red);
+  border-color: #f3b6ba;
+  background: #fff7f7;
+}
+
+.small-button.danger:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }
 
 .projects-grid {
