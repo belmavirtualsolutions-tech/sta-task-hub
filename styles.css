@@ -13,8 +13,8 @@
   --amber: #b45309;
   --red: #d71920;
   --shadow: 0 18px 50px rgba(17, 17, 17, 0.08);
-  --font-heading: "Montserrat", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-family: var(--font-body);
 }
 
@@ -69,7 +69,7 @@ button {
   border-radius: 8px;
   background: var(--accent);
   font-family: var(--font-heading);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .brand strong,
@@ -79,7 +79,8 @@ button {
 
 .brand strong {
   font-family: var(--font-heading);
-  font-weight: 800;
+  font-size: 0.98rem;
+  font-weight: 700;
 }
 
 .brand span,
@@ -128,8 +129,8 @@ button {
 
 .health-score {
   margin: 8px 0 4px;
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.72rem;
+  font-weight: 700;
 }
 
 .main {
@@ -149,8 +150,8 @@ button {
   margin: 0 0 4px;
   color: var(--accent);
   text-transform: uppercase;
-  font-size: 0.76rem;
-  font-weight: 800;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .data-mode {
@@ -162,8 +163,8 @@ button {
   padding: 5px 10px;
   background: var(--accent-soft);
   color: var(--accent-dark);
-  font-size: 0.8rem;
-  font-weight: 800;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 
 h1,
@@ -176,16 +177,16 @@ p {
 h1 {
   margin-bottom: 0;
   font-family: var(--font-heading);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 900;
+  font-size: clamp(1.75rem, 3vw, 2.55rem);
+  font-weight: 700;
   letter-spacing: 0;
 }
 
 h2 {
   margin-bottom: 0;
   font-family: var(--font-heading);
-  font-size: 1.08rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 h3,
@@ -211,7 +212,7 @@ h3,
   background: #fff;
   color: var(--muted);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .search-box {
@@ -219,7 +220,7 @@ h3,
   gap: 6px;
   color: var(--muted);
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .search-box input,
@@ -245,7 +246,7 @@ input {
   border: 1px solid transparent;
   min-height: 42px;
   padding: 10px 14px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .primary-button {
@@ -295,7 +296,7 @@ input {
 }
 
 .metric {
-  padding: 18px;
+  padding: 16px;
 }
 
 .metric span,
@@ -307,7 +308,8 @@ input {
 .metric strong {
   display: block;
   margin: 8px 0;
-  font-size: 2.1rem;
+  font-size: 1.72rem;
+  font-weight: 700;
 }
 
 .metric.warning strong {
@@ -387,7 +389,7 @@ input {
   background: var(--surface-2);
   color: var(--muted);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .pill.high {
@@ -459,7 +461,7 @@ input {
   gap: 5px;
   color: var(--muted);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .status-form input {
@@ -472,7 +474,7 @@ input {
   padding: 8px 12px;
   background: transparent;
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .segment.active {
@@ -505,7 +507,7 @@ input {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .column-title span {
@@ -525,7 +527,7 @@ input {
   padding: 7px 9px;
   color: var(--muted);
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .small-button:hover {
@@ -655,7 +657,7 @@ input {
   gap: 6px;
   color: var(--muted);
   font-size: 0.84rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .checkbox-row {
